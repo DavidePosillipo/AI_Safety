@@ -1,5 +1,5 @@
-# AI Safety
-## Production of a robustness metrics for Deep Learning predictions
+# Safety in AI
+## Robustness metric for Deep Learning predictions
 Portfolio Project for the Data Science Retreat
 
 How reliable are predictions of Deep Learning algorithms? In this project an extension of WGAN is used in order to produce a meaningful measure of robustness. This approach is applicable to every black box classifier and it doesn’t need any modification of the used classifier.
