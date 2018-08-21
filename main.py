@@ -3,6 +3,7 @@ import os
 import numpy as np
 import math
 import sys
+import cProfile
 
 import torch
 from torch.utils.data import DataLoader
@@ -11,7 +12,7 @@ import torchvision.transforms as transforms
 from torchvision.utils import save_image
 
 from model_classes import Generator, Inverter, Discriminator
-from searching_algorithms import iterative_search
+from searching_algorithms import iterative_search, recursive_search
 from training_inverter import train_generator_discriminator, train_inverter
 
 parser = argparse.ArgumentParser()
@@ -30,12 +31,11 @@ parser.add_argument('--n_critic', type=int, default=5, help='number of training 
 parser.add_argument('--clip_value', type=float, default=0.01, help='lower and upper clip value for disc. weights')
 parser.add_argument('--sample_interval', type=int, default=400, help='interval betwen image samples')
 parser.add_argument('--lambda_gp', type=int, default=10, help='loss weight for gradient penalty of WGAN')
-parser.add_argument('--load_gen_inv', action='store_true', default=False, help='should I load already pretrained generator and inverter?')
-parser.add_argument('--save_models', action='store_true', default=False, help='should I save the trained models?')
+parser.add_argument('--iterative_search', action='store_true', default=False, help='use iterative_search for the iterative search algorithm; the default is the recursive search')
+parser.add_argument('--load_gen_inv', action='store_true', default=False, help='should I load already pretrained generator and inverter? Default: train from scratch')
+parser.add_argument('--save_models', action='store_true', default=False, help='should I save the trained models? Default: dont save the model')
 
 opt = parser.parse_args()
-
-print(opt.load_gen_inv)
 
 print(opt)
 
@@ -60,10 +60,17 @@ dataloader = torch.utils.data.DataLoader(
                    ])),
     batch_size=opt.batch_size, shuffle=True)
 
+dataloader_2 = torch.utils.data.DataLoader(
+    datasets.MNIST('data/mnist', train=True, download=True,
+                   transform=transforms.Compose([
+                       transforms.ToTensor(),
+                       transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+                   ])),
+    batch_size=opt.batch_size, shuffle=True)
+
 #######################################
 ## LOADING OF GENERATOR AND INVERTER ##
 ######## If already trained ###########
-print(opt.load_gen_inv)
 if opt.load_gen_inv:
     generator = Generator(latent_dim = opt.latent_dim)
     generator.load_state_dict(torch.load("generator.pt"))
@@ -85,7 +92,7 @@ else:
 
     generator, discriminator = train_generator_discriminator(generator, discriminator, dataloader, opt.n_epochs, opt.latent_dim, opt.sample_interval, opt.n_critic, opt.lambda_gp, opt.lr, opt.b1, opt.b2, cuda)
 
-    inverter = train_inverter(inverter, generator, dataloader, opt.latent_dim, opt.lambda_inv, opt.n_epochs_inverter, opt.lr, opt.b1, opt.b2, cuda)
+    inverter = train_inverter(inverter, generator, dataloader_2, opt.latent_dim, opt.lambda_inv, opt.n_epochs_inverter, opt.lr, opt.b1, opt.b2, cuda)
 
     if opt.save_models:
         torch.save(generator.state_dict(), "generator.pt")
@@ -102,15 +109,15 @@ rf_pretrained = pickle.load(open("mnist_rf_9045.sav", 'rb'), encoding = "latin1"
 print(rf_pretrained)
 
 # # Training data
-dataloader = torch.utils.data.DataLoader(
-    datasets.MNIST('../../data/mnist', train=True, download=True,
-                   transform=transforms.Compose([
-                       transforms.ToTensor(),
-                       transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
-                   ])),
-    batch_size=1, shuffle=True)
-
-data = list(enumerate(dataloader))
+# dataloader = torch.utils.data.DataLoader(
+#     datasets.MNIST('../../data/mnist', train=True, download=True,
+#                    transform=transforms.Compose([
+#                        transforms.ToTensor(),
+#                        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+#                    ])),
+#     batch_size=1, shuffle=True)
+#
+# data = list(enumerate(dataloader))
 #
 # data[0][1][0].shape
 #
@@ -175,17 +182,23 @@ def rf_classifier(x):
 #     data[0][1][1],
 #     verbose = True)
 
+if opt.iterative_search:
+    searcher = iterative_search
+else:
+    searcher = recursive_search
 
-n = 20
+#cProfile.run('searcher(generator, inverter, rf_classifier, data_test[0][1][0], data_test[0][1][1], verbose = False)')
+n = 10
 output_delta_z = np.ndarray(n)
 for i in np.arange(n):
     print("test point", i, "over", n)
-    output_delta_z[i] = iterative_search(generator,
+    output_delta_z[i] = searcher(generator,
         inverter,
         rf_classifier,
         data_test[i][1][0],
         data_test[i][1][1],
-        verbose = True)["delta_z"]
+        verbose = False)["delta_z"]
+    print("delta_z of point", i, " :", output_delta_z[i])
 
 np.save("test_deltaz.npy", output_delta_z)
 
