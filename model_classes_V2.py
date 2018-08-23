@@ -79,7 +79,7 @@ class Discriminator(nn.Module):
 class Inverter(nn.Module):
     def __init__(self, latent_dim, nif, nc):
         super(Inverter, self).__init__()
-
+        self.nif = nif
         self.model_1 = nn.Sequential(
             # input is (nc) x 64 x 64
             nn.Conv2d(nc, nif, 4, 2, 1, bias=False),
@@ -107,6 +107,6 @@ class Inverter(nn.Module):
     def forward(self, img):
         img = self.model_1(img)
         # Reshaping for the Linear layers
-        img = img.view(img.shape[0], nif * nif)
+        img = img.view(img.shape[0], self.nif * self.nif)
         inverted = self.model_2(img)
         return inverted
