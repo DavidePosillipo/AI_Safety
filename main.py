@@ -11,7 +11,7 @@ from torchvision import datasets
 import torchvision.transforms as transforms
 from torchvision.utils import save_image
 
-from model_classes import Generator, Inverter, Discriminator
+from model_classes_V2 import Generator, Inverter, Discriminator
 from searching_algorithms import iterative_search, recursive_search
 from training_inverter import train_generator_discriminator, train_inverter
 
@@ -19,6 +19,10 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--n_epochs', type=int, default=1, help='number of epochs of training')
 parser.add_argument('--n_epochs_inverter', type=int, default=1, help='number of epochs of training for the inverter')
 parser.add_argument('--batch_size', type=int, default=64, help='size of the batches')
+parser.add_argument('--ngf', type=int, default=64)
+parser.add_argument('--ndf', type=int, default=64)
+parser.add_argument('--nif', type=int, default=64)
+parser.add_argument('--nc', type=int, default=1, help='number of channels of the images')
 parser.add_argument('--lr', type=float, default=0.0002, help='adam: learning rate')
 parser.add_argument('--b1', type=float, default=0.5, help='adam: decay of first order momentum of gradient')
 parser.add_argument('--b2', type=float, default=0.999, help='adam: decay of first order momentum of gradient')
@@ -72,18 +76,30 @@ dataloader_2 = torch.utils.data.DataLoader(
 ## LOADING OF GENERATOR AND INVERTER ##
 ######## If already trained ###########
 if opt.load_gen_inv:
-    generator = Generator(latent_dim = opt.latent_dim)
+    generator = Generator(latent_dim = opt.latent_dim,
+        ngf = opt.ngf,
+        nc = opt.nc)
     generator.load_state_dict(torch.load("generator.pt"))
 
-    inverter = Inverter(latent_dim = opt.latent_dim)
+    inverter = Inverter(latent_dim = opt.latent_dim,
+        nif = opt.nif,
+        nc = opt.nc)
     inverter.load_state_dict(torch.load("inverter.pt"))
 
 else:
     print("Generator and Inverter will be trained from scratch")
     # Initialize generator and discriminator
-    generator = Generator(latent_dim = opt.latent_dim)
-    discriminator = Discriminator()
-    inverter = Inverter(latent_dim = opt.latent_dim)
+    generator = Generator(latent_dim = opt.latent_dim,
+        ngf = opt.ngf,
+        nc = opt.nc)
+    #print("Generator correctly instantiated")
+    discriminator = Discriminator(ndf = opt.ndf, nc = opt.nc)
+    print(discriminator)
+    #print("Discriminator correctly instantiated")
+    inverter = Inverter(latent_dim = opt.latent_dim,
+        nif = opt.nif,
+        nc = opt.nc)
+    #print("Inverter correctly instantiated")
 
     if cuda:
         generator.cuda()

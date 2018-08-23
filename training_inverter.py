@@ -64,9 +64,11 @@ def train_generator_discriminator(generator, discriminator, dataloader, n_epochs
         # For each epoch, all the images are processed, using batch_size images for each sub-iteration
         # (imgs, _) is a tuple with the first element made of the batch_size images, and the second element ("_") is made of the labels of the images
         for i, (imgs, _) in enumerate(dataloader):
+            #print("obs", i)
 
             # Configure input
             real_imgs = Variable(imgs.type(Tensor))
+            #print("shape real imgs", real_imgs.shape)
 
             # ---------------------
             #  Train Discriminator
@@ -78,7 +80,8 @@ def train_generator_discriminator(generator, discriminator, dataloader, n_epochs
             # Sample noise as generator input
             # Line 11 of the paper
             # imgs.shape[0] is given by batch_size (it's different only for the last iteration). So here a batch of latent variables z is created, each of them is a vector of size latent_dim.
-            z = Variable(Tensor(np.random.normal(0, 1, (imgs.shape[0], latent_dim))))
+            z = Variable(Tensor(np.random.normal(0, 1, (imgs.shape[0], latent_dim, 1, 1))))
+            #print("shape of z", z.shape)
             #print("z shape", z.shape)
 
             # Generate a batch of images
@@ -163,7 +166,8 @@ def train_inverter(inverter, generator, dataloader, latent_dim, lambda_inv, n_ep
 
             optimizer_I.zero_grad()
 
-            z = Variable(Tensor(np.random.normal(0, 1, (imgs.shape[0], latent_dim))))
+            z = Variable(Tensor(np.random.normal(0, 1, (imgs.shape[0], latent_dim, 1, 1))))
+            print("shape of z", z.shape)
 
             z_prime = inverter(x)
             #print("z_prime shape", z_prime.shape)
