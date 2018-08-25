@@ -29,6 +29,8 @@ class Trainer_inverter():
         # Get generated data
         batch_size = data.size()[0]
         z = self.G.sample_latent(batch_size)
+        if self.use_cuda:
+            z = z.cuda()
         #print(z)
         #print("size of z", z.size())
 

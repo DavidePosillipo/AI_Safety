@@ -30,8 +30,10 @@ trainer = Trainer(generator, discriminator, G_optimizer, D_optimizer,
 trainer.train(data_loader, epochs, save_training_gif=True)
 
 name = 'mnist_model'
-torch.save(trainer.G.state_dict(), './gen_' + name + '.pt')
-torch.save(trainer.D.state_dict(), './dis_' + name + '.pt')
+# torch.save(trainer.G.state_dict(), './gen_' + name + '.pt')
+# torch.save(trainer.D.state_dict(), './dis_' + name + '.pt')
+generator.load_state_dict(torch.load("gen_mnist_model.pt"))
+discriminator.load_state_dict(torch.load("dis_mnist_model.pt"))
 
 trainer_inverter = Trainer_inverter(inverter, generator, I_optimizer, use_cuda=torch.cuda.is_available())
 trainer_inverter.train(data_loader, epochs)
