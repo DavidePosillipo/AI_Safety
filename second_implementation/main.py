@@ -42,6 +42,6 @@ np.save("gd_losses.npy", trainer.losses)
 trainer_inverter = Trainer_inverter(inverter, generator, I_optimizer, use_cuda=torch.cuda.is_available())
 trainer_inverter.train(data_loader, epochs)
 
-torch.save(trainer.I.state_dict(), './inv_' + name + '.pt')
+torch.save(trainer_inverter.I.state_dict(), './inv_' + name + '.pt')
 
 np.save("i_losses", trainer_inverter.losses)
