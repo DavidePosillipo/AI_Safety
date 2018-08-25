@@ -14,7 +14,7 @@ class Trainer_inverter():
         self.I = inverter
         self.I_opt = inv_optimizer
         self.G = generator
-        self.losses = {'D': []}
+        self.losses = {'I': []}
         self.num_steps = 0
         self.use_cuda = use_cuda
         self.print_every = print_every
@@ -28,9 +28,13 @@ class Trainer_inverter():
         """ """
         # Get generated data
         batch_size = data.size()[0]
-        z = self.sample_generator(batch_size)
+        z = self.G.sample_latent(batch_size)
+        #print(z)
+        #print("size of z", z.size())
 
         x_prime = self.G(z)
+
+        #print("size of x_prime", x_prime.size())
 
         # Calculate probabilities on real and generated data
         x = Variable(data)
@@ -39,6 +43,8 @@ class Trainer_inverter():
         z_prime = self.I(x)
 
         x_reconstructed = self.G(z_prime)
+
+        z_reconstructed = self.I(x_prime)
 
         # Create total loss and optimize
         self.I_opt.zero_grad()
