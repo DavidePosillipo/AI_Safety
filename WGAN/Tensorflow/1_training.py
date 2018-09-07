@@ -12,13 +12,13 @@ import tensorflow as tf
 import argparse
 
 import tflib
-import classes.tflib.mnist
-import classes.tflib.plot
-import classes.tflib.save_images
-import classes.tflib.ops.batchnorm
-import classes.tflib.ops.conv2d
-import classes.tflib.ops.deconv2d
-import classes.tflib.ops.linear
+import tflib.mnist
+import tflib.plot
+import tflib.save_images
+import tflib.ops.batchnorm
+import tflib.ops.conv2d
+import tflib.ops.deconv2d
+import tflib.ops.linear
 
 from classes.models_wgan import MnistWganInv
 

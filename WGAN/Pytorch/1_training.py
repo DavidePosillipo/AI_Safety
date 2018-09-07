@@ -37,8 +37,8 @@ trainer = Trainer(generator,
 trainer.train(data_loader, epochs, save_training_gif=True)
 
 name = 'mnist_model_128'
-torch.save(trainer.G.state_dict(), './gen_' + name + '.pt')
-torch.save(trainer.D.state_dict(), './dis_' + name + '.pt')
-torch.save(trainer.I.state_dict(), './inv_' + name + '.pt')
+torch.save(trainer.G.state_dict(), '.models/gen_' + name + '.pt')
+torch.save(trainer.D.state_dict(), '.models/dis_' + name + '.pt')
+torch.save(trainer.I.state_dict(), '.models/inv_' + name + '.pt')
 
 np.save("gdi_losses_128.npy", trainer.losses)

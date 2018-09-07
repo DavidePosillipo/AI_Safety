@@ -25,8 +25,8 @@ generator = Generator(img_size=img_size, latent_dim=64, dim=128)
 discriminator = Discriminator(img_size=img_size, dim=128)
 inverter = Inverter(img_size=img_size, latent_dim=64, dim=128)
 
-generator.load_state_dict(torch.load("gen_mnist_model_128.pt"))
-inverter.load_state_dict(torch.load("inv_mnist_model_128.pt"))
+generator.load_state_dict(torch.load("./models/gen_mnist_model_128.pt"))
+inverter.load_state_dict(torch.load("./models/inv_mnist_model_128.pt"))
 
 generator.cuda()
 inverter.cuda()
