@@ -35,7 +35,7 @@ generator.cuda()
 inverter.cuda()
 
 le_net = Net()
-le_net.load_state_dict(torch.load("./models/le_net.py"))
+le_net.load_state_dict(torch.load("./models/le_net.pt"))
 
 # Training data
 dataloader, dataloader_test = get_mnist_dataloaders(batch_size=1)
