@@ -105,7 +105,7 @@ def main():
         test(args, model, device, test_loader)
 
     name = 'le_net'
-    torch.save(model.state_dict(), '.models/' + name + '.pt')
+    torch.save(model.state_dict(), './models/' + name + '.pt')
 
 
 if __name__ == '__main__':
