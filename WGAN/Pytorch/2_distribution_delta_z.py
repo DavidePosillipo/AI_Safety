@@ -15,6 +15,8 @@ from classes.models_wgan import Generator, Inverter, Discriminator
 from classes.searching_algorithms import iterative_search, recursive_search
 from classes.dataloaders import get_mnist_dataloaders
 
+from LeNet import Net
+
 from sklearn.metrics import accuracy_score
 
 from sklearn.ensemble import RandomForestClassifier
@@ -31,6 +33,9 @@ inverter.load_state_dict(torch.load("./models/inv_mnist_model_64.pt"))
 
 generator.cuda()
 inverter.cuda()
+
+le_net = Net()
+let_net.load_state_dict(torch.load("./models/le_net.py"))
 
 # Training data
 dataloader, dataloader_test = get_mnist_dataloaders(batch_size=1)
@@ -74,7 +79,25 @@ print("accuracy of the black box classifier", accuracy)
 def rf_classifier(x):
     return clf.predict(np.reshape(x, (-1, 1024)))
 
+def nn_classifier(x):
+    return le_net(x)
+
 searcher = recursive_search
+
+for i, data in enumerate(dataloader_test):
+    print("test point", i, "over", n)
+    x = data[0]
+    y = data[1]
+    y_pred = nn_classifier(x)
+    if y_pred != y:
+        continue
+    output_delta_z[i] = searcher(generator,
+        inverter,
+        rf_classifier,
+        x.cuda(),
+        y,
+        verbose = False)["delta_z"]
+    print("delta_z of point", i, " :", output_delta_z[i])
 
 n = len(data_test)
 output_delta_z = np.ndarray(n)
