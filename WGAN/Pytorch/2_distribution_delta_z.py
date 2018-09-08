@@ -84,6 +84,7 @@ def nn_classifier(x):
 
 searcher = recursive_search
 
+n = len(dataloader_test)
 for i, data in enumerate(dataloader_test):
     print("test point", i, "over", n)
     x = data[0]
