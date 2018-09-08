@@ -1,7 +1,7 @@
 import torch
 import torch.optim as optim
 
-from classes.dataloaders import get_mnist_dataloaders, get_lsun_dataloader
+from classes.dataloaders import get_mnist_dataloaders
 from classes.models_wgan import Generator, Discriminator, Inverter
 from classes.training_wgan_inverter import Trainer
 
@@ -10,9 +10,9 @@ import numpy as np
 data_loader, _ = get_mnist_dataloaders(batch_size=80)
 img_size = (32, 32, 1)
 
-generator = Generator(img_size=img_size, latent_dim=64, dim=128)
+generator = Generator(img_size=img_size, latent_dim=64, dim=64)
 discriminator = Discriminator(img_size=img_size, dim=64)
-inverter = Inverter(img_size=img_size, latent_dim=64, dim=128)
+inverter = Inverter(img_size=img_size, latent_dim=64, dim=64)
 
 print(generator)
 print(discriminator)
@@ -36,9 +36,9 @@ trainer = Trainer(generator,
     use_cuda=torch.cuda.is_available())
 trainer.train(data_loader, epochs, save_training_gif=True)
 
-name = 'mnist_model_128'
+name = 'mnist_model_64'
 torch.save(trainer.G.state_dict(), '.models/gen_' + name + '.pt')
 torch.save(trainer.D.state_dict(), '.models/dis_' + name + '.pt')
 torch.save(trainer.I.state_dict(), '.models/inv_' + name + '.pt')
 
-np.save("gdi_losses_128.npy", trainer.losses)
+np.save("gdi_losses_64.npy", trainer.losses)

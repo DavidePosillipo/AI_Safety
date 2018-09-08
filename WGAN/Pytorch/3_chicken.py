@@ -14,8 +14,9 @@ from torchvision import datasets
 import torchvision.transforms as transforms
 from torchvision.utils import save_image
 
-from classes.models import Generator, Inverter, Discriminator
+from classes.models_wgan import Generator, Inverter, Discriminator
 from classes.searching_algorithms import iterative_search, recursive_search
+from classes.dataloaders import get_mnist_dataloaders
 
 from sklearn.metrics import accuracy_score
 
@@ -24,25 +25,18 @@ from sklearn.metrics import accuracy_score
 
 img_size = (32, 32, 1)
 
-generator = Generator(img_size=img_size, latent_dim=64, dim=128)
-discriminator = Discriminator(img_size=img_size, dim=128)
-inverter = Inverter(img_size=img_size, latent_dim=64, dim=128)
+generator = Generator(img_size=img_size, latent_dim=64, dim=64)
+discriminator = Discriminator(img_size=img_size, dim=64)
+inverter = Inverter(img_size=img_size, latent_dim=64, dim=64)
 
-generator.load_state_dict(torch.load("./models/gen_mnist_model_128.pt"))
-inverter.load_state_dict(torch.load("./models/inv_mnist_model_128.pt"))
+generator.load_state_dict(torch.load("./models/gen_mnist_model_64.pt"))
+inverter.load_state_dict(torch.load("./models/inv_mnist_model_64.pt"))
 
 generator.cuda()
 inverter.cuda()
 
 # Training data
-dataloader = torch.utils.data.DataLoader(
-    datasets.MNIST('../data/mnist', train=True, download=True,
-                   transform=transforms.Compose([
-                       transforms.Resize(32),
-                       transforms.ToTensor(),
-                       transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
-                   ])),
-    batch_size=1, shuffle=True)
+dataloader, dataloader_test = get_mnist_dataloaders(batch_size=80)
 
 data = list(enumerate(dataloader))
 
@@ -61,16 +55,6 @@ y_2 = np.array(y).reshape(len(dataloader), )
 clf = RandomForestClassifier(max_depth = 10, random_state = 0)
 
 clf.fit(X_2, y_2)
-
-
-dataloader_test = torch.utils.data.DataLoader(
-    datasets.MNIST('../data/mnist', train=False, download=True,
-                   transform=transforms.Compose([
-                       transforms.Resize(32),
-                       transforms.ToTensor(),
-                       transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
-                   ])),
-    batch_size=1, shuffle=True)
 
 data_test = list(enumerate(dataloader_test))
 
@@ -95,10 +79,12 @@ def rf_classifier(x):
 
 ### Chicken example
 ck = io.imread('chicken.jpg', as_gray=True)
-ck = resize(ck, (28, 28), anti_aliasing = True)
+ck = resize(ck, (32, 32), anti_aliasing = True)
 ck = np.float32(ck)
+# rescaling to white over black
+ck = 1-ck
 
-ck_data = ck.reshape(1, 28*28)
+ck_data = ck.reshape(1, 32*32)
 
 # RF prediction
 y_hat_rf = rf_classifier(ck)

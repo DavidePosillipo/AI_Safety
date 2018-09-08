@@ -144,11 +144,11 @@ def recursive_search(gen_fn, inv_fn, cla_fn, x, y, y_t=None, z=None,
         z_tilde = z + delta_z       # z tilde
         x_tilde = gen_fn(torch.from_numpy(z_tilde.astype(np.float32)).cuda())   # x tilde
         y_tilde = cla_fn(x_tilde.cpu().detach().numpy())   # y tilde
-        print("y_t", y_t)
-        print("y", y)
-        print("y_tilde", y_tilde)
-        print("cla_fn(x)", cla_fn(x.cpu().detach().numpy()))
-        print("cla_fn(gen(inv(x)))", cla_fn(gen_fn(inv_fn(x)).cpu().detach().numpy()))
+        # print("y_t", y_t)
+        # print("y", y)
+        # print("y_tilde", y_tilde)
+        # print("cla_fn(x)", cla_fn(x.cpu().detach().numpy()))
+        # print("cla_fn(gen(inv(x)))", cla_fn(gen_fn(inv_fn(x)).cpu().detach().numpy()))
         if y_t is None:
             indices_adv = np.where(y_tilde != y)[0]
         else:
@@ -207,7 +207,7 @@ def recursive_search(gen_fn, inv_fn, cla_fn, x, y, y_t=None, z=None,
             indices_adv = np.where(y_tilde != y)[0]
         else:
             indices_adv = np.where(y_tilde == y_t)[0]
-        print("len indices_adv", len(indices_adv))
+        #print("len indices_adv", len(indices_adv))
         if len(indices_adv) == 0:
             counter += 1
             printout()
