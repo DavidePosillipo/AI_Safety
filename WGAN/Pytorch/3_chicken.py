@@ -102,7 +102,7 @@ ck_probabilities_rf = clf.predict_proba(ck_data)
 print("estimated probabilities for the chicken (random forest)", ck_probabilities_rf)
 
 # RF prediction
-ck_probabilities_nn = nn_classifier(ck)
+ck_probabilities_nn = nn_classifier(torch.Tensor(ck))
 print("estimated probabilities for the chicken (LeNet)", ck_probabilities_nn)
 _, y_hat_nn = torch.max(ck_probabilities_nn.data, 1)
 print("estimate for the chicken (LeNet)", y_hat_nn)
@@ -115,7 +115,7 @@ adversary_ck_rf = recursive_search(gen_fn, inv_fn, cla_fn_rf, ck_data, y_hat_rf,
 
 print("delta_z for the chicken (random forest):", adversary_ck_rf["delta_z"])
 
-adversary_ck_nn = recursive_search(gen_fn, inv_fn, cla_fn_nn, ck, y_hat_nn,
+adversary_ck_nn = recursive_search(gen_fn, inv_fn, cla_fn_nn, torch.Tensor(ck), y_hat_nn,
                    nsamples=5000, step=0.01, verbose=False)
 
 print("delta_z for the chicken (LeNet):", adversary_ck_nn["delta_z"])
