@@ -26,7 +26,7 @@ test_loader_fashion = torch.utils.data.DataLoader(
     datasets.FashionMNIST('./data/FashionData', download = True, train=False, transform=transforms.ToTensor()),
     batch_size=1, shuffle=True, **kwargs)
 
-data_test_fashion_losses = np.ndarray(len(data_test_fashion))
+data_test_fashion_losses = np.ndarray(len(test_loader_fashion))
 
 for i, data in enumerate(test_loader_fashion):
     data = data[0].to(device)
