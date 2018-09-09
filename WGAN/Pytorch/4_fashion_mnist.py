@@ -51,7 +51,7 @@ searcher = recursive_search
 n = len(test_loader_fashion)
 output_delta_z = np.ndarray(n)
 
-for i, data in enumerate(test_loader_fashion)
+for i, data in enumerate(test_loader_fashion):
     print("test point", i, "over", n)
     x = data[0].cuda()
     y_pred = nn_classifier(x)

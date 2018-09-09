@@ -54,9 +54,6 @@ ck = resize(ck, (32, 32), anti_aliasing = True)
 ck = np.float32(ck)
 # rescaling to white over black
 ck = 1-ck
-
-#ck_data = ck.reshape(1, 32*32)
-
 ck_tensor = torch.Tensor(ck).view(1, 1, 32, 32).cuda()
 
 # NN prediction
@@ -76,7 +73,6 @@ fl = io.imread('falafel.jpg', as_gray=True)
 fl = resize(fl, (32, 32), anti_aliasing = True)
 fl = np.float32(fl)
 fl = 1-fl
-
 fl_tensor = torch.Tensor(fl).view(1, 1, 32, 32).cuda()
 
 # NN prediction
