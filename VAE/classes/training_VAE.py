@@ -45,6 +45,7 @@ class TrainerVAE():
 
         print('====> Epoch: {} Average loss: {:.4f}'.format(
               epoch, train_loss / len(train_loader.dataset)))
+        return train_loss / len(train_loader.dataset)
 
 
     def test(self, epoch, test_loader, batch_size):
@@ -64,12 +65,15 @@ class TrainerVAE():
 
         test_loss /= len(test_loader.dataset)
         print('====> Test set loss: {:.4f}'.format(test_loss))
+        return test_loss
 
 
     def train_VAE(self, train_loader, test_loader, n_epochs, log_interval, batch_size):
         for epoch in range(1, n_epochs + 1):
-            self.train(epoch, train_loader, log_interval)
-            self.test(epoch, test_loader, batch_size)
+            train_losses = []
+            test_losses = []
+            train_losses.append(self.train(epoch, train_loader, log_interval))
+            test_losses.append(self.test(epoch, test_loader, batch_size))
             with torch.no_grad():
                 sample = torch.randn(64, 20).to(self.device)
                 sample = self.model.decode(sample).cpu()

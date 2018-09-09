@@ -9,6 +9,8 @@ from torchvision.utils import save_image
 from classes.models_vae import VAE
 from classes.training_VAE import TrainerVAE
 
+import numpy as np
+
 torch.manual_seed(123)
 
 batch_size = 128
@@ -32,7 +34,7 @@ test_loader = torch.utils.data.DataLoader(
 VAE = VAE()
 vae_optimizer = optim.Adam(VAE.parameters(), lr=1e-3)
 trainer_VAE = TrainerVAE(VAE, vae_optimizer, device)
-trainer_VAE.train_VAE(train_loader, test_loader, epochs, log_interval, batch_size)
+train_losses, test_losses = trainer_VAE.train_VAE(train_loader, test_loader, epochs, log_interval, batch_size)
 
 name = 'mnist'
 torch.save(trainer_VAE.model.state_dict(), './models/VAE_' + name + '.pt')
