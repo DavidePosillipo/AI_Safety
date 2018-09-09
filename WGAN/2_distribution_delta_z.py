@@ -6,7 +6,7 @@ import sys
 import cProfile
 
 import torch
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, sampler
 from torchvision import datasets
 import torchvision.transforms as transforms
 from torchvision.utils import save_image
@@ -34,11 +34,14 @@ le_net.load_state_dict(torch.load("./models/le_net.pt"))
 le_net.eval()
 le_net.cuda()
 
-# Training data
-dataloader, dataloader_test = get_mnist_dataloaders(batch_size=1)
+# Test data
+idx = np.random.randint(10000, size = 100)
+test_set_sampler = sampler.SubsetRandomSampler(idx)
 
-idx = np.random.randint(len(dataloader_test), 100)
-dataloader_test = dataloader_test[idx]
+all_transforms = transforms.Compose([transforms.Resize(32), transforms.ToTensor()])
+test_data = datasets.MNIST('./data', train=False, transform=all_transforms)
+test_loader = DataLoader(test_data, batch_size=1, sampler=test_set_sampler)
+
 
 def nn_classifier(x):
     predicted = le_net(x)
@@ -47,11 +50,11 @@ def nn_classifier(x):
 
 searcher = recursive_search
 
-n = len(dataloader_test)
+n = len(test_loader)
 
 output_delta_z = np.ndarray(n)
 
-for i, data in enumerate(dataloader_test):
+for i, data in enumerate(test_loader):
     print("test point", i, "over", n)
     x = data[0].cuda()
     y = data[1].cuda()

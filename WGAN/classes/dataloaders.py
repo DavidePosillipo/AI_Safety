@@ -10,9 +10,9 @@ def get_mnist_dataloaders(batch_size=128):
         transforms.ToTensor()
     ])
     # Get train and test data
-    train_data = datasets.MNIST('../data', train=True, download=True,
+    train_data = datasets.MNIST('./data', train=True, download=True,
                                 transform=all_transforms)
-    test_data = datasets.MNIST('../data', train=False,
+    test_data = datasets.MNIST('./data', train=False,
                                transform=all_transforms)
     # Create dataloaders
     train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
@@ -28,9 +28,9 @@ def get_fashion_mnist_dataloaders(batch_size=128):
         transforms.ToTensor()
     ])
     # Get train and test data
-    train_data = datasets.FashionMNIST('../fashion_data', train=True, download=True,
+    train_data = datasets.FashionMNIST('./fashion_data', train=True, download=True,
                                        transform=all_transforms)
-    test_data = datasets.FashionMNIST('../fashion_data', train=False,
+    test_data = datasets.FashionMNIST('./fashion_data', train=False,
                                       transform=all_transforms)
     # Create dataloaders
     train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
