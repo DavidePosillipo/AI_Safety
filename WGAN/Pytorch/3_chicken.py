@@ -39,49 +39,14 @@ inverter.cuda()
 
 le_net = Net()
 le_net.load_state_dict(torch.load("./models/le_net.pt"))
+le_net.eval()
 le_net.cuda()
+
+searcher = recursive_search
 
 # Training data
 dataloader, dataloader_test = get_mnist_dataloaders(batch_size=1)
-#
-# data = list(enumerate(dataloader))
-#
-# X = []
-# y = []
-# for i in data:
-#     X.append(i[1][0].numpy())
-#     y.append(i[1][1].numpy())
-#
-# X_2 = np.array(X)
-# X_2 = np.reshape(X_2, (len(dataloader), 1024))
-# type(X_2)
-#
-# y_2 = np.array(y).reshape(len(dataloader), )
-#
-# clf = RandomForestClassifier(max_depth = 10, random_state = 0)
-#
-# clf.fit(X_2, y_2)
-#
-# data_test = list(enumerate(dataloader_test))
-#
-# X_test = []
-# y_test = []
-# for i in data_test:
-#     X_test.append(i[1][0].numpy())
-#     y_test.append(i[1][1].numpy())
-#
-# X_test = np.array(X_test)
-# X_test = np.reshape(X_test, (len(dataloader_test), 1024))
-#
-# y_test = np.array(y_test).reshape(len(dataloader_test), )
-#
-# predicted = clf.predict(X_test)
-# accuracy = accuracy_score(y_test, predicted)
-#
-# print("accuracy of the black box classifier", accuracy)
-#
-# def rf_classifier(x):
-#     return clf.predict(np.reshape(x, (-1, 1024)))
+
 
 def nn_classifier(x):
     predicted = le_net(x)
@@ -99,12 +64,6 @@ ck = 1-ck
 
 ck_tensor = torch.Tensor(ck).view(1, 1, 32, 32).cuda()
 
-# RF prediction
-# y_hat_rf = rf_classifier(ck)
-# print("estimate for the chicken (random forest)", y_hat_rf)
-# ck_probabilities_rf = clf.predict_proba(ck_data)
-# print("estimated probabilities for the chicken (random forest)", ck_probabilities_rf)
-
 # NN prediction
 ck_probabilities_nn = le_net(ck_tensor)
 print("estimated probabilities for the chicken (LeNet)", ck_probabilities_nn)
@@ -112,14 +71,27 @@ y_hat_nn = nn_classifier(ck_tensor)
 print("estimate for the chicken (LeNet)", y_hat_nn)
 
 # Delta_z for the chicken
-searcher = recursive_search
-
-#adversary_ck_rf = recursive_search(generator, inverter, rf_classifier, ck_data, y_hat_rf,
-#                   nsamples=5000, step=0.01, verbose=False)
-
-#print("delta_z for the chicken (random forest):", adversary_ck_rf["delta_z"])
-
 adversary_ck_nn = recursive_search(generator, inverter, nn_classifier, ck_tensor, y_hat_nn,
                    nsamples=5000, step=0.01, verbose=False)
 
 print("delta_z for the chicken (LeNet):", adversary_ck_nn["delta_z"])
+
+### Let's try with a falafel picture
+fl = io.imread('falafel.png', as_gray=True)
+fl = resize(fl, (32, 32), anti_aliasing = True)
+fl = np.float32(fl)
+fl = 1-fl
+
+fl_tensor = torch.Tensor(fl).view(1, 1, 32, 32)
+
+# NN prediction
+fl_probabilities_nn = le_net(fl_tensor)
+print("estimated probabilities for the falafel (LeNet)", fl_probabilities_nn)
+y_hat_nn = nn_classifier(fl_tensor)
+print("estimate for the falafel (LeNet)", y_hat_nn)
+
+# Delta_z for the falafel
+adversary_fl_nn = recursive_search(generator, inverter, nn_classifier, fl_tensor, y_hat_nn,
+                   nsamples=5000, step=0.01, verbose=False)
+
+print("delta_z for the falafel (LeNet):", adversary_fl_nn["delta_z"])

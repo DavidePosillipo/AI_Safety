@@ -1,5 +1,4 @@
 import torch
-
 import numpy as np
 
 
@@ -44,25 +43,17 @@ def iterative_search(gen_fn, inv_fn, cla_fn, x, y, y_t=None, z=None,
     if z is None:
         z = inv_fn(x)
         z = z.cpu().detach().numpy()
-        #print("shape of z", z.shape)
 
     while True:
         # delta_z corresponds to epsilon in the paper
         delta_z = np.random.randn(nsamples, z.shape[1])     # http://mathworld.wolfram.com/HyperspherePointPicking.html
-        #print("a")
         d = np.random.rand(nsamples) * (h - l) + l          # length range [l, h)
-        #print("b")
         norm_p = np.linalg.norm(delta_z, ord=p, axis=1)
-        #print("c")
         d_norm = np.divide(d, norm_p).reshape(-1, 1)        # rescale/normalize factor
         delta_z = np.multiply(delta_z, d_norm)
         z_tilde = z + delta_z       # z tilde
-        #print("z_tilde shape", z_tilde.shape)
         x_tilde = gen_fn(torch.from_numpy(z_tilde.astype(np.float32)))   # x tilde
-        #print("x_tilde shape", x_tilde.shape)
-        #print("x_tilde numpy shape", x_tilde.detach().numpy().shape)
         y_tilde = cla_fn(x_tilde)   # y tilde
-        #print("y_tilde shape", y_tilde.shape)
 
         if y_t is None:
             indices_adv = np.where(y_tilde != y)[0]
@@ -144,16 +135,10 @@ def recursive_search(gen_fn, inv_fn, cla_fn, x, y, y_t=None, z=None,
         z_tilde = z + delta_z       # z tilde
         x_tilde = gen_fn(torch.from_numpy(z_tilde.astype(np.float32)).cuda())   # x tilde
         y_tilde = cla_fn(x_tilde)   # y tilde
-        # print("y_t", y_t)
-        # print("y", y)
-        # print("y_tilde", y_tilde)
-        # print("cla_fn(x)", cla_fn(x.cpu().detach().numpy()))
-        # print("cla_fn(gen(inv(x)))", cla_fn(gen_fn(inv_fn(x)).cpu().detach().numpy()))
         if y_t is None:
             indices_adv = np.where(y_tilde != y)[0]
         else:
             indices_adv = np.where(y_tilde == y_t)[0]
-        print("len indices_adv", len(indices_adv))
         if len(indices_adv) == 0:       # no candidate generated
             if h - l < step:
                 break
@@ -207,7 +192,6 @@ def recursive_search(gen_fn, inv_fn, cla_fn, x, y, y_t=None, z=None,
             indices_adv = np.where(y_tilde != y)[0]
         else:
             indices_adv = np.where(y_tilde == y_t)[0]
-        #print("len indices_adv", len(indices_adv))
         if len(indices_adv) == 0:
             counter += 1
             printout()

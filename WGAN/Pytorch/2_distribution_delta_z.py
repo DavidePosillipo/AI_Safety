@@ -29,13 +29,14 @@ discriminator = Discriminator(img_size=img_size, dim=32)
 inverter = Inverter(img_size=img_size, latent_dim=64, dim=32)
 
 generator.load_state_dict(torch.load("./models/gen_mnist_model_32.pt"))
-inverter.load_state_dict(torch.load("./models/inv_mnist_model_32ß.pt"))
+inverter.load_state_dict(torch.load("./models/inv_mnist_model_32.pt"))
 
 generator.cuda()
 inverter.cuda()
 
 le_net = Net()
 le_net.load_state_dict(torch.load("./models/le_net.pt"))
+le_net.eval()
 le_net.cuda()
 
 # Training data
