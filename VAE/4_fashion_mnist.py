@@ -6,7 +6,6 @@ from torchvision import datasets, transforms
 from torchvision.utils import save_image
 
 from classes.models_vae import VAE
-from classes.training_VAE import Trainer_VAE
 
 import numpy as np
 
