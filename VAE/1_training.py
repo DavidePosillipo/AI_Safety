@@ -35,4 +35,4 @@ trainer_VAE = TrainerVAE(VAE, vae_optimizer, device)
 trainer_VAE.train_VAE(train_loader, test_loader, epochs, log_interval, batch_size)
 
 name = 'mnist'
-torch.save(trainer_VAE.VAE.state_dict(), './VAE_' + name + '.pt')
+torch.save(trainer_VAE.model.state_dict(), './VAE_' + name + '.pt')
