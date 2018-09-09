@@ -7,7 +7,7 @@ from torch.autograd import Variable
 from torch.autograd import grad as torch_grad
 
 
-class Trainer_WGAN_Inv():
+class TrainerWGANInv():
     def __init__(self, generator, discriminator, inverter, gen_optimizer, dis_optimizer, inv_optimizer,
                  gp_weight=10, critic_iterations=5, lambda_inv=0.1, print_every=50,
                  use_cuda=False):

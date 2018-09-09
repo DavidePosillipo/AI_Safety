@@ -36,6 +36,7 @@ inverter.cuda()
 
 le_net = Net()
 le_net.load_state_dict(torch.load("./models/le_net.pt"))
+le_net.cuda()
 
 # Training data
 dataloader, dataloader_test = get_mnist_dataloaders(batch_size=1)
@@ -85,11 +86,13 @@ def nn_classifier(x):
 searcher = recursive_search
 
 n = len(dataloader_test)
+output_delta_z = np.ndarray(n)
 for i, data in enumerate(dataloader_test):
     print("test point", i, "over", n)
     x = data[0]
     y = data[1]
-    y_pred = nn_classifier(x)
+    predictions = nn_classifier(x)
+    _, y_pred = torch.max(predictions.data, 1)
     if y_pred != y:
         continue
     output_delta_z[i] = searcher(generator,

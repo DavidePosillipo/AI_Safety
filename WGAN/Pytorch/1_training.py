@@ -3,7 +3,7 @@ import torch.optim as optim
 
 from classes.dataloaders import get_mnist_dataloaders
 from classes.models_wgan import Generator, Discriminator, Inverter
-from classes.training_wgan_inverter import Trainer
+from classes.training_wgan_inverter import TrainerWGANInv
 
 import numpy as np
 
@@ -27,7 +27,7 @@ I_optimizer = optim.Adam(inverter.parameters(), lr=lr, betas=betas)
 
 # Train model
 epochs = 200
-trainer = Trainer(generator,
+trainer = TrainerWGANInv(generator,
     discriminator,
     inverter,
     G_optimizer,

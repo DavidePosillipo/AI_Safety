@@ -18,6 +18,8 @@ from classes.models_wgan import Generator, Inverter, Discriminator
 from classes.searching_algorithms import iterative_search, recursive_search
 from classes.dataloaders import get_mnist_dataloaders
 
+from LeNet import Net
+
 from sklearn.metrics import accuracy_score
 
 from sklearn.ensemble import RandomForestClassifier
@@ -25,18 +27,22 @@ from sklearn.metrics import accuracy_score
 
 img_size = (32, 32, 1)
 
-generator = Generator(img_size=img_size, latent_dim=64, dim=64)
-discriminator = Discriminator(img_size=img_size, dim=64)
-inverter = Inverter(img_size=img_size, latent_dim=64, dim=64)
+generator = Generator(img_size=img_size, latent_dim=64, dim=32)
+discriminator = Discriminator(img_size=img_size, dim=32)
+inverter = Inverter(img_size=img_size, latent_dim=64, dim=32)
 
-generator.load_state_dict(torch.load("./models/gen_mnist_model_64.pt"))
-inverter.load_state_dict(torch.load("./models/inv_mnist_model_64.pt"))
+generator.load_state_dict(torch.load("./models/gen_mnist_model_32.pt"))
+inverter.load_state_dict(torch.load("./models/inv_mnist_model_32.pt"))
 
 generator.cuda()
 inverter.cuda()
 
+le_net = Net()
+le_net.load_state_dict(torch.load("./models/le_net.pt"))
+le_net.cuda()
+
 # Training data
-dataloader, dataloader_test = get_mnist_dataloaders(batch_size=80)
+dataloader, dataloader_test = get_mnist_dataloaders(batch_size=1)
 
 data = list(enumerate(dataloader))
 
@@ -77,6 +83,9 @@ print("accuracy of the black box classifier", accuracy)
 def rf_classifier(x):
     return clf.predict(np.reshape(x, (-1, 1024)))
 
+def nn_classifier(x):
+    return le_net(x)
+
 ### Chicken example
 ck = io.imread('chicken.jpg', as_gray=True)
 ck = resize(ck, (32, 32), anti_aliasing = True)
@@ -92,6 +101,12 @@ print("estimate for the chicken (random forest)", y_hat_rf)
 ck_probabilities_rf = rf_classifier.predict_proba(ck_data)
 print("estimated probabilities for the chicken (random forest)", ck_probabilities_rf)
 
+# RF prediction
+ck_probabilities_nn = nn_classifier(ck)
+print("estimated probabilities for the chicken (LeNet)", ck_probabilities_nn)
+_, y_hat_nn = torch.max(ck_probabilities_nn.data, 1)
+print("estimate for the chicken (LeNet)", y_hat_nn)
+
 # Delta_z for the chicken
 searcher = recursive_search
 
@@ -99,3 +114,8 @@ adversary_ck_rf = recursive_search(gen_fn, inv_fn, cla_fn_rf, ck_data, y_hat_rf,
                    nsamples=5000, step=0.01, verbose=False)
 
 print("delta_z for the chicken (random forest):", adversary_ck_rf["delta_z"])
+
+adversary_ck_nn = recursive_search(gen_fn, inv_fn, cla_fn_nn, ck, y_hat_nn,
+                   nsamples=5000, step=0.01, verbose=False)
+
+print("delta_z for the chicken (LeNet):", adversary_ck_nn["delta_z"])
