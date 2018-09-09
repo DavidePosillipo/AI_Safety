@@ -54,7 +54,7 @@ output_delta_z = np.ndarray(n)
 
 for i, data in enumerate(dataloader_test):
     print("test point", i, "over", n)
-    x = data[0]
+    x = data[0].cuda()
     y = data[1]
     y_pred = nn_classifier(x)
 
@@ -64,10 +64,10 @@ for i, data in enumerate(dataloader_test):
     output_delta_z[i] = searcher(generator,
         inverter,
         nn_classifier,
-        x.cuda(),
+        x,
         y,
         verbose = False)["delta_z"]
-        
+
     print("delta_z of point", i, " :", output_delta_z[i])
 
 np.save("test_deltaz.npy", output_delta_z)
