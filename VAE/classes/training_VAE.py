@@ -60,7 +60,7 @@ class TrainerVAE():
                     comparison = torch.cat([data[:n],
                                           recon_batch.view(batch_size, 1, 28, 28)[:n]])
                     save_image(comparison.cpu(),
-                             'results/reconstruction_' + str(epoch) + '.png', nrow=n)
+                             'models/reconstruction_' + str(epoch) + '.png', nrow=n)
 
         test_loss /= len(test_loader.dataset)
         print('====> Test set loss: {:.4f}'.format(test_loss))
@@ -74,4 +74,4 @@ class TrainerVAE():
                 sample = torch.randn(64, 20).to(self.device)
                 sample = model.decode(sample).cpu()
                 save_image(sample.view(64, 1, 28, 28),
-                           'results/sample_' + str(epoch) + '.png')
+                           'models/sample_' + str(epoch) + '.png')
