@@ -61,7 +61,7 @@ def iterative_search(gen_fn, inv_fn, cla_fn, x, y, y_t=None, z=None,
         x_tilde = gen_fn(torch.from_numpy(z_tilde.astype(np.float32)))   # x tilde
         #print("x_tilde shape", x_tilde.shape)
         #print("x_tilde numpy shape", x_tilde.detach().numpy().shape)
-        y_tilde = cla_fn(x_tilde.detach().numpy())   # y tilde
+        y_tilde = cla_fn(x_tilde)   # y tilde
         #print("y_tilde shape", y_tilde.shape)
 
         if y_t is None:
@@ -143,7 +143,7 @@ def recursive_search(gen_fn, inv_fn, cla_fn, x, y, y_t=None, z=None,
         delta_z = np.multiply(delta_z, d_norm)
         z_tilde = z + delta_z       # z tilde
         x_tilde = gen_fn(torch.from_numpy(z_tilde.astype(np.float32)).cuda())   # x tilde
-        y_tilde = cla_fn(x_tilde.cpu().detach().numpy())   # y tilde
+        y_tilde = cla_fn(x_tilde)   # y tilde
         # print("y_t", y_t)
         # print("y", y)
         # print("y_tilde", y_tilde)
@@ -201,7 +201,7 @@ def recursive_search(gen_fn, inv_fn, cla_fn, x, y, y_t=None, z=None,
         delta_z = np.multiply(delta_z, d_norm)
         z_tilde = z + delta_z
         x_tilde = gen_fn(torch.from_numpy(z_tilde.astype(np.float32)).cuda())
-        y_tilde = cla_fn(x_tilde.cpu().detach().numpy())
+        y_tilde = cla_fn(x_tilde)
 
         if y_t is None:
             indices_adv = np.where(y_tilde != y)[0]
