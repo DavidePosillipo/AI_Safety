@@ -58,7 +58,7 @@ for i, data in enumerate(dataloader_test):
     y = data[1]
     y_pred = nn_classifier(x)
 
-    if y_pred != y:
+    if y_pred != y.cuda():
         continue
 
     output_delta_z[i] = searcher(generator,
