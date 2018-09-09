@@ -14,6 +14,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 VAE = VAE()
 VAE.load_state_dict(torch.load("./models/VAE_mnist.pt"))
+VAE.to(device)
 
 kwargs = {'num_workers': 1, 'pin_memory': True} if torch.cuda.is_available() else {}
 
@@ -21,8 +22,7 @@ test_loader = torch.utils.data.DataLoader(
     datasets.MNIST('../data/mnist', train=False, transform=transforms.ToTensor()),
     batch_size=1, shuffle=True, **kwargs)
 
-data_test = list(enumerate(test_loader))
-data_test_losses = np.ndarray(len(data_test))
+data_test_losses = np.ndarray(len(test_loader))
 
 for i, data in enumerate(test_loader):
     data = data[0].to(device)
