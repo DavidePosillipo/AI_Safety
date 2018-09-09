@@ -62,6 +62,7 @@ for i, data in enumerate(test_loader_fashion):
         x,
         y_pred,
         verbose = False)["delta_z"]
+        
     print("delta_z of point", i, " :", output_delta_z[i])
 
 np.save("test_deltaz_fashion_mnist.npy", output_delta_z)

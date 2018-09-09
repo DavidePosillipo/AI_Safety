@@ -57,7 +57,7 @@ ck = 1-ck
 ck_tensor = torch.Tensor(ck).view(1, 1, 32, 32).cuda()
 
 # NN prediction
-ck_probabilities_nn = le_net(ck_tensor)
+ck_probabilities_nn = torch.exp(le_net(ck_tensor))
 print("estimated probabilities for the chicken (LeNet)", ck_probabilities_nn)
 y_hat_nn = nn_classifier(ck_tensor)
 print("estimate for the chicken (LeNet)", y_hat_nn)
@@ -76,7 +76,7 @@ fl = 1-fl
 fl_tensor = torch.Tensor(fl).view(1, 1, 32, 32).cuda()
 
 # NN prediction
-fl_probabilities_nn = le_net(fl_tensor)
+fl_probabilities_nn = torch.exp(le_net(fl_tensor))
 print("estimated probabilities for the falafel (LeNet)", fl_probabilities_nn)
 y_hat_nn = nn_classifier(fl_tensor)
 print("estimate for the falafel (LeNet)", y_hat_nn)
