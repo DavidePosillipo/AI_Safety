@@ -35,7 +35,7 @@ le_net.eval()
 le_net.cuda()
 
 # Test data
-idx = np.random.randint(10000, size = 100)
+idx = np.random.randint(10000, size = 500)
 test_set_sampler = sampler.SubsetRandomSampler(idx)
 
 all_transforms = transforms.Compose([transforms.Resize(32), transforms.ToTensor()])
