@@ -6,7 +6,8 @@ from torch.nn import functional as F
 from torchvision import datasets, transforms
 from torchvision.utils import save_image
 
-from models_vae import VAE
+from classes.models_vae import VAE
+from classes.training_VAE import TrainerVAE
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -34,8 +35,8 @@ test_loader = torch.utils.data.DataLoader(
 
 
 VAE = VAE()
-vae_optimizer = optim.Adam(self.model.parameters(), lr=1e-3)
-trainer_VAE = Trainer_VAE(VAE, vae_optimizer, device)
+vae_optimizer = optim.Adam(VAE.parameters(), lr=1e-3)
+trainer_VAE = TrainerVAE(VAE, vae_optimizer, device)
 trainer_VAE.train_VAE(train_loader, test_loader, epochs, log_interval, batch_size)
 
 name = 'mnist'

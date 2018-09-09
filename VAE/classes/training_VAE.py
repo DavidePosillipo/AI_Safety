@@ -6,7 +6,7 @@ from torchvision import datasets, transforms
 from torchvision.utils import save_image
 
 
-class Trainer_VAE():
+class TrainerVAE():
     def __init__(self, model, optimizer, device):
         self.model = model.to(device)
         self.optimizer = optimizer
