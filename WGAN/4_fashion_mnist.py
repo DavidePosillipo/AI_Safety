@@ -9,7 +9,7 @@ from skimage import io
 from skimage.transform import resize
 
 import torch
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, sampler
 from torchvision import datasets
 import torchvision.transforms as transforms
 from torchvision.utils import save_image
