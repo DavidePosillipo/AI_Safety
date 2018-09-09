@@ -6,9 +6,14 @@ from torchvision import datasets, transforms
 from torchvision.utils import save_image
 
 from classes.models_vae import VAE
-from classes.training_VAE import TrainerVAE
 
 import numpy as np
+
+# loss function
+def loss_function(recon_x, x, mu, logvar):
+    BCE = F.binary_cross_entropy(recon_x, x.view(-1, 784), size_average=False)
+    KLD = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
+    return BCE + KLD
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -27,7 +32,7 @@ data_test_losses = np.ndarray(len(test_loader))
 for i, data in enumerate(test_loader):
     data = data[0].to(device)
     recon, mu, logvar = VAE(data)
-    data_loss = trainer_VAE.loss_function(recon, data, mu, logvar)
+    data_loss = loss_function(recon, data, mu, logvar)
     data_test_losses[i] = data_loss
     #print("loss function for test input ", i, " :", data_loss)
 
