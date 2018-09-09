@@ -110,12 +110,12 @@ print("estimate for the chicken (LeNet)", y_hat_nn)
 # Delta_z for the chicken
 searcher = recursive_search
 
-adversary_ck_rf = recursive_search(generator, inverter, cla_fn_rf, ck_data, y_hat_rf,
+adversary_ck_rf = recursive_search(generator, inverter, rf_classifier, ck_data, y_hat_rf,
                    nsamples=5000, step=0.01, verbose=False)
 
 print("delta_z for the chicken (random forest):", adversary_ck_rf["delta_z"])
 
-adversary_ck_nn = recursive_search(generator, inverter, cla_fn_nn, torch.Tensor(ck).view(1, 1, 32, 32).cuda(), y_hat_nn,
+adversary_ck_nn = recursive_search(generator, inverter, nn_classifier, torch.Tensor(ck).view(1, 1, 32, 32).cuda(), y_hat_nn,
                    nsamples=5000, step=0.01, verbose=False)
 
 print("delta_z for the chicken (LeNet):", adversary_ck_nn["delta_z"])
