@@ -72,6 +72,6 @@ class TrainerVAE():
             self.test(epoch, test_loader, batch_size)
             with torch.no_grad():
                 sample = torch.randn(64, 20).to(self.device)
-                sample = model.decode(sample).cpu()
+                sample = self.model.decode(sample).cpu()
                 save_image(sample.view(64, 1, 28, 28),
                            'models/sample_' + str(epoch) + '.png')
