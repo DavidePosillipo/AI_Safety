@@ -85,23 +85,23 @@ def nn_classifier(x):
 
 searcher = recursive_search
 
-n = len(dataloader_test)
-output_delta_z = np.ndarray(n)
-for i, data in enumerate(dataloader_test):
-    print("test point", i, "over", n)
-    x = data[0]
-    y = data[1]
-    predictions = nn_classifier(x)
-    _, y_pred = torch.max(predictions.data, 1)
-    if y_pred != y:
-        continue
-    output_delta_z[i] = searcher(generator,
-        inverter,
-        rf_classifier,
-        x.cuda(),
-        y,
-        verbose = False)["delta_z"]
-    print("delta_z of point", i, " :", output_delta_z[i])
+# n = len(dataloader_test)
+# output_delta_z = np.ndarray(n)
+# for i, data in enumerate(dataloader_test):
+#     print("test point", i, "over", n)
+#     x = data[0]
+#     y = data[1]
+#     predictions = nn_classifier(x)
+#     _, y_pred = torch.max(predictions.data, 1)
+#     if y_pred != y:
+#         continue
+#     output_delta_z[i] = searcher(generator,
+#         inverter,
+#         rf_classifier,
+#         x.cuda(),
+#         y,
+#         verbose = False)["delta_z"]
+#     print("delta_z of point", i, " :", output_delta_z[i])
 
 n = len(data_test)
 output_delta_z = np.ndarray(n)
