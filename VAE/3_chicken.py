@@ -9,6 +9,10 @@ from classes.models_vae import VAE
 
 import numpy as np
 
+import matplotlib.pyplot as plt
+from skimage import io
+from skimage.transform import resize
+
 # loss function
 def loss_function(recon_x, x, mu, logvar):
     BCE = F.binary_cross_entropy(recon_x, x.view(-1, 784), size_average=False)

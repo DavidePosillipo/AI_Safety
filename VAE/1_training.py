@@ -14,7 +14,7 @@ import numpy as np
 torch.manual_seed(123)
 
 batch_size = 128
-epochs = 1
+epochs = 10
 log_interval = 10
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
