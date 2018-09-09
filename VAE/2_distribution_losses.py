@@ -24,7 +24,7 @@ VAE.to(device)
 kwargs = {'num_workers': 1, 'pin_memory': True} if torch.cuda.is_available() else {}
 
 test_loader = torch.utils.data.DataLoader(
-    datasets.MNIST('../data/mnist', train=False, transform=transforms.ToTensor()),
+    datasets.MNIST('./data/mnist', train=False, transform=transforms.ToTensor()),
     batch_size=1, shuffle=True, **kwargs)
 
 data_test_losses = np.ndarray(len(test_loader))
@@ -34,7 +34,7 @@ for i, data in enumerate(test_loader):
     recon, mu, logvar = VAE(data)
     data_loss = loss_function(recon, data, mu, logvar)
     data_test_losses[i] = data_loss
-    #print("loss function for test input ", i, " :", data_loss)
+    print("loss function for test input ", i, " :", data_loss)
 
 np.save("test_data_losses.npy", data_test_losses)
 print("MNIST test data loss computation completed.")

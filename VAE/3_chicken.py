@@ -13,6 +13,8 @@ import matplotlib.pyplot as plt
 from skimage import io
 from skimage.transform import resize
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 # loss function
 def loss_function(recon_x, x, mu, logvar):
     BCE = F.binary_cross_entropy(recon_x, x.view(-1, 784), size_average=False)
@@ -21,6 +23,7 @@ def loss_function(recon_x, x, mu, logvar):
 
 VAE = VAE()
 VAE.load_state_dict(torch.load("./models/VAE_mnist.pt"))
+VAE.to(device)
 
 ### Chicken
 ck = io.imread('chicken.jpg', as_gray=True)
