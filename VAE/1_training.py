@@ -39,4 +39,5 @@ train_losses, test_losses = trainer_VAE.train_VAE(train_loader, test_loader, epo
 name = 'mnist'
 torch.save(trainer_VAE.model.state_dict(), './models/VAE_' + name + '.pt')
 
-np.save("./models/test_losses_" + name + ".npy")
+np.save("./models/train_losses_" + name + ".npy", np.ndarray(train_losses))
+np.save("./models/test_losses_" + name + ".npy", np.ndarray(test_losses))
