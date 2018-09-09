@@ -79,3 +79,4 @@ class TrainerVAE():
                 sample = self.model.decode(sample).cpu()
                 save_image(sample.view(64, 1, 28, 28),
                            'models/sample_' + str(epoch) + '.png')
+        return train_losses, test_losses
