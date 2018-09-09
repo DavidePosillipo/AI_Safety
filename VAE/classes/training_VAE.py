@@ -8,7 +8,7 @@ from torchvision.utils import save_image
 
 class TrainerVAE():
     def __init__(self, model, optimizer, device):
-        self.device = device 
+        self.device = device
         self.model = model.to(device)
         self.optimizer = optimizer
 
@@ -47,7 +47,7 @@ class TrainerVAE():
               epoch, train_loss / len(train_loader.dataset)))
 
 
-    def test(self, epoch):
+    def test(self, epoch, test_loader, batch_size):
         self.model.eval()
         test_loss = 0
         with torch.no_grad():
