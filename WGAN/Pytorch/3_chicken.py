@@ -98,7 +98,7 @@ ck_data = ck.reshape(1, 32*32)
 # RF prediction
 y_hat_rf = rf_classifier(ck)
 print("estimate for the chicken (random forest)", y_hat_rf)
-ck_probabilities_rf = rf_classifier.predict_proba(ck_data)
+ck_probabilities_rf = clf.predict_proba(ck_data)
 print("estimated probabilities for the chicken (random forest)", ck_probabilities_rf)
 
 # RF prediction
