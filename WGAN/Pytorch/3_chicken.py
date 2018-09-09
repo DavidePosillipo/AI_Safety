@@ -77,7 +77,7 @@ fl = resize(fl, (32, 32), anti_aliasing = True)
 fl = np.float32(fl)
 fl = 1-fl
 
-fl_tensor = torch.Tensor(fl).view(1, 1, 32, 32)
+fl_tensor = torch.Tensor(fl).view(1, 1, 32, 32).cuda()
 
 # NN prediction
 fl_probabilities_nn = le_net(fl_tensor)
