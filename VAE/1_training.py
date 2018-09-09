@@ -14,7 +14,7 @@ import numpy as np
 torch.manual_seed(123)
 
 batch_size = 128
-epochs = 10
+epochs = 1
 log_interval = 10
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -38,3 +38,5 @@ train_losses, test_losses = trainer_VAE.train_VAE(train_loader, test_loader, epo
 
 name = 'mnist'
 torch.save(trainer_VAE.model.state_dict(), './models/VAE_' + name + '.pt')
+
+np.save("./models/test_losses_" + name + ".npy")
