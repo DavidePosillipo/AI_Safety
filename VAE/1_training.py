@@ -22,12 +22,12 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 kwargs = {'num_workers': 1, 'pin_memory': True} if torch.cuda.is_available() else {}
 
 train_loader = torch.utils.data.DataLoader(
-    datasets.MNIST('../data/mnist', train=True, download=True,
+    datasets.MNIST('./data/mnist', train=True, download=True,
                    transform=transforms.ToTensor()),
     batch_size=batch_size, shuffle=True, **kwargs)
 
 test_loader = torch.utils.data.DataLoader(
-    datasets.MNIST('../data/mnist', train=False, transform=transforms.ToTensor()),
+    datasets.MNIST('./data/mnist', train=False, transform=transforms.ToTensor()),
     batch_size=batch_size, shuffle=True, **kwargs)
 
 
