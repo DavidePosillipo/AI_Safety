@@ -20,10 +20,6 @@ from classes.dataloaders import get_mnist_dataloaders, get_fashion_mnist_dataloa
 
 from LeNet import Net
 
-from sklearn.metrics import accuracy_score
-
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score
 
 img_size = (32, 32, 1)
 

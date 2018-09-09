@@ -17,11 +17,6 @@ from classes.dataloaders import get_mnist_dataloaders
 
 from LeNet import Net
 
-from sklearn.metrics import accuracy_score
-
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score
-
 img_size = (32, 32, 1)
 
 generator = Generator(img_size=img_size, latent_dim=64, dim=32)

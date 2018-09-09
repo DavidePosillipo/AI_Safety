@@ -20,11 +20,6 @@ from classes.dataloaders import get_mnist_dataloaders
 
 from LeNet import Net
 
-from sklearn.metrics import accuracy_score
-
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score
-
 img_size = (32, 32, 1)
 
 generator = Generator(img_size=img_size, latent_dim=64, dim=32)
@@ -77,7 +72,7 @@ adversary_ck_nn = recursive_search(generator, inverter, nn_classifier, ck_tensor
 print("delta_z for the chicken (LeNet):", adversary_ck_nn["delta_z"])
 
 ### Let's try with a falafel picture
-fl = io.imread('falafel.png', as_gray=True)
+fl = io.imread('falafel.jpg', as_gray=True)
 fl = resize(fl, (32, 32), anti_aliasing = True)
 fl = np.float32(fl)
 fl = 1-fl
