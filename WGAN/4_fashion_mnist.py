@@ -44,14 +44,20 @@ def nn_classifier(x):
     return y_hat_nn
 
 ### Fashion MNIST
-train_loader_fashion, test_loader_fashion = get_fashion_mnist_dataloaders(batch_size=1)
+# Test data
+idx = np.random.randint(10000, size = 500)
+test_set_sampler = sampler.SubsetRandomSampler(idx)
+
+all_transforms = transforms.Compose([transforms.Resize(32), transforms.ToTensor()])
+test_data = datasets.FashionMNIST('./fashion_data', train=False, transform=all_transforms)
+test_loader = DataLoader(test_data, batch_size=1, sampler=test_set_sampler)
 
 searcher = recursive_search
 
-n = len(test_loader_fashion)
+n = len(test_loader)
 output_delta_z = np.ndarray(n)
 
-for i, data in enumerate(test_loader_fashion):
+for i, data in enumerate(test_loader):
     print("test point", i, "over", n)
     x = data[0].cuda()
     y_pred = nn_classifier(x)
@@ -62,7 +68,7 @@ for i, data in enumerate(test_loader_fashion):
         x,
         y_pred,
         verbose = False)["delta_z"]
-        
+
     print("delta_z of point", i, " :", output_delta_z[i])
 
 np.save("test_deltaz_fashion_mnist.npy", output_delta_z)
