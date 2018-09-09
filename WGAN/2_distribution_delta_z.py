@@ -37,6 +37,9 @@ le_net.cuda()
 # Training data
 dataloader, dataloader_test = get_mnist_dataloaders(batch_size=1)
 
+idx = np.random.randint(len(dataloader_test), 100)
+dataloader_test = dataloader_test[idx]
+
 def nn_classifier(x):
     predicted = le_net(x)
     _, y_hat_nn = torch.max(predicted.data, 1)
