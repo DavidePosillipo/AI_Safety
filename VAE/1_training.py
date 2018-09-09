@@ -9,11 +9,6 @@ from torchvision.utils import save_image
 from classes.models_vae import VAE
 from classes.training_VAE import TrainerVAE
 
-import numpy as np
-import matplotlib.pyplot as plt
-from skimage import io
-from skimage.transform import resize
-
 torch.manual_seed(123)
 
 batch_size = 128

@@ -13,7 +13,7 @@ class TrainerVAE():
 
 
     # Reconstruction + KL divergence losses summed over all elements and batch
-    def loss_function(recon_x, x, mu, logvar):
+    def loss_function(self, recon_x, x, mu, logvar):
         BCE = F.binary_cross_entropy(recon_x, x.view(-1, 784), size_average=False)
 
         # see Appendix B from VAE paper:
@@ -25,7 +25,7 @@ class TrainerVAE():
         return BCE + KLD
 
 
-    def train(epoch, train_loader, log_interval):
+    def train(self, epoch, train_loader, log_interval):
         self.model.train()
         train_loss = 0
         for batch_idx, (data, _) in enumerate(train_loader):
@@ -46,7 +46,7 @@ class TrainerVAE():
               epoch, train_loss / len(train_loader.dataset)))
 
 
-    def test(epoch):
+    def test(self, epoch):
         self.model.eval()
         test_loss = 0
         with torch.no_grad():
@@ -65,7 +65,7 @@ class TrainerVAE():
         print('====> Test set loss: {:.4f}'.format(test_loss))
 
 
-    def train_VAE(train_loader, test_loader, n_epochs, log_interval, batch_size):
+    def train_VAE(self, train_loader, test_loader, n_epochs, log_interval, batch_size):
         for epoch in range(1, n_epochs + 1):
             self.train(epoch, train_loader, log_interval)
             self.test(epoch, test_loader, batch_size)
