@@ -11,7 +11,8 @@ class TrainerVAE():
         self.device = device
         self.model = model.to(device)
         self.optimizer = optimizer
-
+        self.train_losses = []
+        self.test_losses = []
 
     # Reconstruction + KL divergence losses summed over all elements and batch
     def loss_function(self, recon_x, x, mu, logvar):
@@ -43,9 +44,9 @@ class TrainerVAE():
                     100. * batch_idx / len(train_loader),
                     loss.item() / len(data)))
 
+        self.train_losses.append(train_loss / len(train_loader.dataset))
         print('====> Epoch: {} Average loss: {:.4f}'.format(
               epoch, train_loss / len(train_loader.dataset)))
-        return train_loss / len(train_loader.dataset)
 
 
     def test(self, epoch, test_loader, batch_size):
@@ -64,19 +65,15 @@ class TrainerVAE():
                              'models/reconstruction_' + str(epoch) + '.png', nrow=n)
 
         test_loss /= len(test_loader.dataset)
+        self.test_losses.append(test_loss)
         print('====> Test set loss: {:.4f}'.format(test_loss))
-        return test_loss
-
 
     def train_VAE(self, train_loader, test_loader, n_epochs, log_interval, batch_size):
         for epoch in range(1, n_epochs + 1):
-            train_losses = []
-            test_losses = []
-            train_losses.append(self.train(epoch, train_loader, log_interval))
-            test_losses.append(self.test(epoch, test_loader, batch_size))
+            self.train(epoch, train_loader, log_interval)
+            self.test(epoch, test_loader, batch_size)
             with torch.no_grad():
                 sample = torch.randn(64, 20).to(self.device)
                 sample = self.model.decode(sample).cpu()
                 save_image(sample.view(64, 1, 28, 28),
                            'models/sample_' + str(epoch) + '.png')
-        return train_losses, test_losses

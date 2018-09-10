@@ -34,10 +34,10 @@ test_loader = torch.utils.data.DataLoader(
 VAE = VAE()
 vae_optimizer = optim.Adam(VAE.parameters(), lr=1e-3)
 trainer_VAE = TrainerVAE(VAE, vae_optimizer, device)
-train_losses, test_losses = trainer_VAE.train_VAE(train_loader, test_loader, epochs, log_interval, batch_size)
+trainer_VAE.train_VAE(train_loader, test_loader, epochs, log_interval, batch_size)
 
 name = 'mnist'
 torch.save(trainer_VAE.model.state_dict(), './models/VAE_' + name + '.pt')
 
-np.save("./models/train_losses_" + name + ".npy", np.asarray(train_losses))
-np.save("./models/test_losses_" + name + ".npy", np.asarray(test_losses))
+np.save("./models/train_losses_" + name + ".npy", np.asarray(trainer_VAE.train_losses))
+np.save("./models/test_losses_" + name + ".npy", np.asarray(trainer_VAE.test_losses))
