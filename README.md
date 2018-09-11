@@ -14,6 +14,9 @@ This approaches are applicable to every black box classifier and they don't need
 
 Using this approach is possible to create an alarm system that alerts the user if an online prediction is weak. This is particularly important in scenarios where AI could affect the safety of people or environment.
 
+### Main results
+A summary of the results will be added here soon. Now you can give a look to the slides (AI_Safety_presentation_community_day.pdf) that I used for the Data Science Retreat Community Day presentation. 
+
 ### Usage
 To set up the environment, do:
 ```
@@ -47,7 +50,7 @@ to get the distribution of delta_z for the Fashion MNIST test set.
 #### VAE
 The VAE can be tested with CPU or GPU.
 
-To test the WGAN, go to the WGAN folder and:
+To test the VAE, go to the VAE folder and:
 ```
 python 1_training.py
 ```
