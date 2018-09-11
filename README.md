@@ -1,19 +1,25 @@
 # Safety in AI
-## Robustness metric for Deep Learning predictions
+## Robustness metrics for Deep Learning predictions
 Portfolio Project for the Data Science Retreat
+
+**WORK IN PROGRESS: THE REPO WILL BE UPDATED IN THE NEXT DAYS. Thanks for the patience.**
 
 How reliable are predictions of Deep Learning algorithms? In this project I investigated:
 1. an extension of WGAN (Wasserstein Genetarive Adversarial Networks);
 2. an application of VAE (Variational Autoencoder)
+
 in order to produce a meaningful measure of robustness.
 
 This approaches are applicable to every black box classifier and they don't need any modification of the used classifier.
 
 Using this approach is possible to create an alarm system that alerts the user if an online prediction is weak. This is particularly important in scenarios where AI could affect the safety of people or environment.
 
-**WORK IN PROGRESS: THE REPO WILL BE UPDATED IN THE NEXT DAYS. Thanks for the patience.**
-
 ### Usage
+To set up the environment, do:
+```
+pip install -r requirements.txt
+```
+
 #### WGAN + Inverter
 At the moment, the WGAN approach is usable only with a GPU.
 

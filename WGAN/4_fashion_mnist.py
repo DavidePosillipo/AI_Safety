@@ -31,7 +31,9 @@ generator.load_state_dict(torch.load("./models/gen_mnist_model_32.pt"))
 inverter.load_state_dict(torch.load("./models/inv_mnist_model_32.pt"))
 
 generator.cuda()
+generator.eval()
 inverter.cuda()
+inverter.eval()
 
 le_net = Net()
 le_net.load_state_dict(torch.load("./models/le_net.pt"))
