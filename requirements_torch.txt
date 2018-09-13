@@ -1,0 +1,12 @@
+certifi==2018.8.24
+cffi==1.11.5
+imageio==2.4.1
+mkl-fft==1.0.4
+mkl-random==1.0.1
+numpy==1.15.1
+olefile==0.46
+Pillow==5.2.0
+pycparser==2.18
+six==1.11.0
+torch==0.4.1
+torchvision==0.2.1

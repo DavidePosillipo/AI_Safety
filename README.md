@@ -1,8 +1,7 @@
 # Safety in AI
 ## Robustness metrics for Deep Learning predictions
-Portfolio Project for the Data Science Retreat
 
-**WORK IN PROGRESS: THE REPO WILL BE UPDATED IN THE NEXT DAYS. Thanks for the patience.**
+Portfolio Project for the Data Science Retreat
 
 How reliable are predictions of Deep Learning algorithms? In this project I investigated:
 1. an extension of WGAN (Wasserstein Genetarive Adversarial Networks);
@@ -20,14 +19,17 @@ Main idea of both the approaches:
 
 If the new data are "too" different, than you should consider as not completely reliable your prediction (or avoid it).
 
-
 ### Main results
 A summary of the results will be added here soon. Now you can give a look to the slides (AI_Safety_presentation_community_day.pdf) that I used for the Data Science Retreat Community Day presentation.
 
-### Usage
-To set up the environment, do:
-```
-pip install -r requirements.txt
+### Setup - WGAN & PyTorch
+
+Create virtual env with Python 3.6+ (tested on 3.7)
+
+```bash
+$ conda install pytorch torchvision -c pytorch
+
+$ pip install imageio
 ```
 
 #### WGAN + Inverter
