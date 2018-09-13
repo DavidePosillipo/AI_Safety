@@ -8,15 +8,22 @@ from torch.autograd import grad as torch_grad
 
 
 class TrainerWGANInv():
-    def __init__(self, generator, discriminator, inverter, gen_optimizer, dis_optimizer, inv_optimizer,
-                 gp_weight=10, critic_iterations=5, lambda_inv=0.1, print_every=50,
-                 use_cuda=False):
-        self.G = generator
-        self.G_opt = gen_optimizer
-        self.D = discriminator
-        self.D_opt = dis_optimizer
-        self.I = inverter
-        self.I_opt = inv_optimizer
+    def __init__(
+            self,
+            generator,
+            discriminator,
+            inverter,
+            gp_weight=10,
+            critic_iterations=5,
+            lambda_inv=0.1,
+            print_every=50,
+            use_cuda=False
+    ):
+
+        self.generator = generator
+        self.discriminator = discriminator
+        self.inverter = inverter
+
         self.losses = {'G': [], 'D': [], 'I': [], 'GP': [], 'gradient_norm': []}
         self.num_steps = 0
         self.use_cuda = use_cuda
@@ -26,9 +33,9 @@ class TrainerWGANInv():
         self.print_every = print_every
 
         if self.use_cuda:
-            self.G.cuda()
-            self.D.cuda()
-            self.I.cuda()
+            self.generator.cuda()
+            self.discriminator.cuda()
+            self.inverter.cuda()
 
     def _critic_train_iteration(self, data):
         """ """
@@ -40,19 +47,19 @@ class TrainerWGANInv():
         data = Variable(data)
         if self.use_cuda:
             data = data.cuda()
-        d_real = self.D(data)
-        d_generated = self.D(generated_data)
+        d_real = self.discriminator(data)
+        d_generated = self.discriminator(generated_data)
 
         # Get gradient penalty
         gradient_penalty = self._gradient_penalty(data, generated_data)
         self.losses['GP'].append(gradient_penalty.item())
 
         # Create total loss and optimize
-        self.D_opt.zero_grad()
+        self.discriminator.optimizer.zero_grad()
         d_loss = d_generated.mean() - d_real.mean() + gradient_penalty
         d_loss.backward()
 
-        self.D_opt.step()
+        self.discriminator.optimizer.step()
 
         # Record loss
         self.losses['D'].append(d_loss.item())
@@ -61,13 +68,13 @@ class TrainerWGANInv():
         """ """
         # Get generated data
         batch_size = data.size()[0]
-        z = self.G.sample_latent(batch_size)
+        z = self.generator.sample_latent(batch_size)
         if self.use_cuda:
             z = z.cuda()
         #print(z)
         #print("size of z", z.size())
 
-        x_prime = self.G(z)
+        x_prime = self.generator(z)
 
         #print("size of x_prime", x_prime.size())
 
@@ -75,35 +82,35 @@ class TrainerWGANInv():
         x = Variable(data)
         if self.use_cuda:
             x = data.cuda()
-        z_prime = self.I(x)
+        z_prime = self.inverter(x)
 
-        x_reconstructed = self.G(z_prime)
+        x_reconstructed = self.generator(z_prime)
 
-        z_reconstructed = self.I(x_prime)
+        z_reconstructed = self.inverter(x_prime)
 
         # Create total loss and optimize
-        self.I_opt.zero_grad()
+        self.inverter.optimizer.zero_grad()
         i_loss = ((x - x_reconstructed) ** 2).mean() + self.lambda_inv * ((z - z_reconstructed) ** 2).mean()
         i_loss.backward()
 
-        self.I_opt.step()
+        self.inverter.optimizer.step()
 
         # Record loss
         self.losses['I'].append(i_loss.item())
 
     def _generator_train_iteration(self, data):
         """ """
-        self.G_opt.zero_grad()
+        self.generator.optimizer.zero_grad()
 
         # Get generated data
         batch_size = data.size()[0]
         generated_data = self.sample_generator(batch_size)
 
         # Calculate loss and optimize
-        d_generated = self.D(generated_data)
+        d_generated = self.discriminator(generated_data)
         g_loss = - d_generated.mean()
         g_loss.backward()
-        self.G_opt.step()
+        self.generator.optimizer.step()
 
         # Record loss
         self.losses['G'].append(g_loss.item())
@@ -122,7 +129,7 @@ class TrainerWGANInv():
             interpolated = interpolated.cuda()
 
         # Calculate probability of interpolated examples
-        prob_interpolated = self.D(interpolated)
+        prob_interpolated = self.discriminator(interpolated)
 
         # Calculate gradients of probabilities with respect to examples
         gradients = torch_grad(outputs=prob_interpolated, inputs=interpolated,
@@ -163,7 +170,7 @@ class TrainerWGANInv():
     def train(self, data_loader, epochs, save_training_gif=True):
         if save_training_gif:
             # Fix latents to see how image generation improves during training
-            fixed_latents = Variable(self.G.sample_latent(64))
+            fixed_latents = Variable(self.generator.sample_latent(64))
             if self.use_cuda:
                 fixed_latents = fixed_latents.cuda()
             training_progress_images = []
@@ -174,7 +181,7 @@ class TrainerWGANInv():
 
             if save_training_gif:
                 # Generate batch of images and convert to grid
-                img_grid = make_grid(self.G(fixed_latents).cpu().data)
+                img_grid = make_grid(self.generator(fixed_latents).cpu().data)
                 # Convert to numpy and transpose axes to fit imageio convention
                 # i.e. (width, height, channels)
                 img_grid = np.transpose(img_grid.numpy(), (1, 2, 0))
@@ -186,10 +193,10 @@ class TrainerWGANInv():
                             training_progress_images)
 
     def sample_generator(self, num_samples):
-        latent_samples = Variable(self.G.sample_latent(num_samples))
+        latent_samples = Variable(self.generator.sample_latent(num_samples))
         if self.use_cuda:
             latent_samples = latent_samples.cuda()
-        generated_data = self.G(latent_samples)
+        generated_data = self.generator(latent_samples)
         return generated_data
 
     def sample(self, num_samples):
