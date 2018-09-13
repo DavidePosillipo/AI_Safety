@@ -46,4 +46,4 @@ if __name__ == '__main__':
     torch.save(trainer.D.state_dict(), './models/dis_' + name + '.pt')
     torch.save(trainer.I.state_dict(), './models/inv_' + name + '.pt')
 
-    np.save("gdi_losses_32.npy", trainer.losses)
+    np.save("data/gdi_losses_32.npy", trainer.losses)
