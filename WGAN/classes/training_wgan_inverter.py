@@ -6,6 +6,8 @@ from torchvision.utils import make_grid
 from torch.autograd import Variable
 from torch.autograd import grad as torch_grad
 
+from tensorboard import Logger
+
 
 class TrainerWGANInv():
     def __init__(
@@ -24,6 +26,7 @@ class TrainerWGANInv():
         self.discriminator = discriminator
         self.inverter = inverter
 
+        #  TODO default dict here
         self.losses = {'G': [], 'D': [], 'I': [], 'GP': [], 'gradient_norm': []}
         self.num_steps = 0
         self.use_cuda = use_cuda
@@ -36,6 +39,8 @@ class TrainerWGANInv():
             self.generator.cuda()
             self.discriminator.cuda()
             self.inverter.cuda()
+
+        self.logger = Logger('./logs')
 
     def _critic_train_iteration(self, data):
         """ """
@@ -154,18 +159,32 @@ class TrainerWGANInv():
             self.num_steps += 1
             self._critic_train_iteration(data[0])
             self._inverter_train_iteration(data[0])
+
             # Only update generator every |critic_iterations| iterations
             if self.num_steps % self.critic_iterations == 0:
                 self._generator_train_iteration(data[0])
 
+            #  catching case where we dont have gen loss yet
+            try:
+                gen_loss = self.losses['G'][-1]
+            except IndexError:
+                gen_loss = 0
+
+            summary = {
+                'generator_loss': gen_loss,
+                'discriminator_loss': self.losses['D'][-1],
+                'inverter_loss': self.losses['I'][-1],
+                'gradient_penalty': self.losses['GP'][-1],
+                'gradients_norm': self.losses['gradient_norm'][-1]
+            }
+
+            #  print to console
             if i % self.print_every == 0:
-                print("Iteration {}".format(i + 1))
-                print("D: {}".format(self.losses['D'][-1]))
-                print("I: {}".format(self.losses['I'][-1]))
-                print("GP: {}".format(self.losses['GP'][-1]))
-                print("Gradient norm: {}".format(self.losses['gradient_norm'][-1]))
-                if self.num_steps > self.critic_iterations:
-                    print("G: {}".format(self.losses['G'][-1]))
+                {print('{} {:0.2f}'.format(k, v)) for k, v in summary.items()}
+
+            #  log to tensorboard
+            {self.logger.scalar_summary(key, value, self.num_steps)
+             for key, value in summary.items()}
 
     def train(self, data_loader, epochs, save_training_gif=True):
         if save_training_gif:
