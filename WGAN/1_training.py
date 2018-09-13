@@ -6,6 +6,7 @@ from classes.dataloaders import get_mnist_dataloaders
 from classes.models_wgan import Generator, Discriminator, Inverter
 from classes.training_wgan_inverter import TrainerWGANInv
 
+
 if __name__ == '__main__':
 
     data_loader, _ = get_mnist_dataloaders(batch_size=64)
@@ -15,6 +16,7 @@ if __name__ == '__main__':
     discriminator = Discriminator(img_size=img_size, dim=32)
     inverter = Inverter(img_size=img_size, latent_dim=64, dim=32)
 
+    #  these print statements could be in __init__ of the networks
     print(generator)
     print(discriminator)
     print(inverter)
