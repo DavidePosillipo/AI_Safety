@@ -208,7 +208,7 @@ class TrainerWGANInv():
                 training_progress_images.append(img_grid)
 
         if save_training_gif:
-            imageio.mimsave('./training_{}_epochs.gif'.format(epochs),
+            imageio.mimsave('./data/training_{}_epochs.gif'.format(epochs),
                             training_progress_images)
 
     def sample_generator(self, num_samples):

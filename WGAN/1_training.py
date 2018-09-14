@@ -27,7 +27,7 @@ if __name__ == '__main__':
         img_size=img_size, latent_dim=64, dim=32, **optimizer_params
     )
 
-    epochs = 200
+    epochs = 2
     trainer = TrainerWGANInv(
         generator,
         discriminator,
@@ -38,8 +38,8 @@ if __name__ == '__main__':
     trainer.train(data_loader, epochs, save_training_gif=True)
 
     name = 'mnist_model_32'
-    torch.save(trainer.G.state_dict(), './models/gen_' + name + '.pt')
-    torch.save(trainer.D.state_dict(), './models/dis_' + name + '.pt')
-    torch.save(trainer.I.state_dict(), './models/inv_' + name + '.pt')
+    torch.save(trainer.generator.state_dict(), './models/gen_' + name + '.pt')
+    torch.save(trainer.discriminator.state_dict(), './models/dis_' + name + '.pt')
+    torch.save(trainer.inverter.state_dict(), './models/inv_' + name + '.pt')
 
     np.save("data/gdi_losses_32.npy", trainer.losses)
