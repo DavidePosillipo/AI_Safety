@@ -1,11 +1,12 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import torch.optim as optim
 from torch.autograd import Variable
 
 
 class Generator(nn.Module):
-    def __init__(self, img_size, latent_dim, dim):
+    def __init__(self, img_size, latent_dim, dim, lr, betas):
         super(Generator, self).__init__()
 
         self.dim = int(dim)
@@ -32,6 +33,10 @@ class Generator(nn.Module):
             nn.Sigmoid()
         )
 
+        self.optimizer = optim.Adam(self.parameters(), lr=lr, betas=betas)
+
+        print(repr(self))
+
     def forward(self, input_data):
         # Map latent into appropriate size for transposed convolutions
         x = self.latent_to_features(input_data)
@@ -45,7 +50,7 @@ class Generator(nn.Module):
 
 
 class Discriminator(nn.Module):
-    def __init__(self, img_size, dim):
+    def __init__(self, img_size, dim, lr, betas):
         """
         img_size : (int, int, int)
             Height and width must be powers of 2.  E.g. (32, 32, 1) or
@@ -75,6 +80,10 @@ class Discriminator(nn.Module):
             #nn.Sigmoid()
         )
 
+        self.optimizer = optim.Adam(self.parameters(), lr=lr, betas=betas)
+
+        print(repr(self))
+
     def forward(self, input_data):
         batch_size = input_data.size()[0]
         x = self.image_to_features(input_data)
@@ -83,7 +92,7 @@ class Discriminator(nn.Module):
 
 
 class Inverter(nn.Module):
-    def __init__(self, img_size, latent_dim, dim):
+    def __init__(self, img_size, latent_dim, dim, lr, betas):
         """
         img_size: (int, int, int)
             Height and widht must be powers of 2. E.g. (32, 32, 1) or
@@ -115,6 +124,10 @@ class Inverter(nn.Module):
             nn.LeakyReLU(0.2),
             nn.Linear(int(output_size_int), latent_dim)
         )
+
+        self.optimizer = optim.Adam(self.parameters(), lr=lr, betas=betas)
+
+        print(repr(self))
 
     def forward(self, input_data):
         batch_size = input_data.size()[0]
